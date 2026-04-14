@@ -8,17 +8,17 @@ class ViewModelJumpex: ObservableObject {
     @Published var score: Int = 0
     @Published var gameOver: Bool = false
     @Published var currentLevel: Int = 1 // 1: Beginner, 2: Intermediate
+    @Published var elapsedTime: TimeInterval = 0
     @Published var screenSize: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     
     private var displayLink: CADisplayLink?
     private var lastTimestamp: CFTimeInterval = 0
-    private var accumulatedTime: TimeInterval = 0
-    private let obstacleSpawnInterval: TimeInterval = 1.5
+    private var spawnAccumulator: TimeInterval = 0
     private var passedObstacles: Set<Int> = []
     
-    // Parámetros del juego según nivel
+    // Parámetros del juego según tiempo transcurrido
     private var obstacleSpeedMultiplier: CGFloat {
-        return currentLevel == 1 ? 1.0 : 1.5
+        return elapsedTime < 60 ? 1.0 : 1.6
     }
     
     func setUpPlayer(size: CGSize) {
@@ -31,6 +31,7 @@ class ViewModelJumpex: ObservableObject {
         self.gameOver = false
         self.obstacles = []
         self.passedObstacles = []
+        elapsedTime = 0
         startGameLoop()
     }
     
@@ -44,45 +45,66 @@ class ViewModelJumpex: ObservableObject {
         displayLink?.invalidate()
         displayLink = nil
         lastTimestamp = 0
-        accumulatedTime = 0
+        spawnAccumulator = 0
+        elapsedTime = 0
     }
     
     @objc private func gameLoop() {
         guard !gameOver else { return }
-        
-        // Actualizar obstáculos
-        updateObstacles()
-        
+        guard let displayLink = displayLink else { return }
+
+        let timestamp = displayLink.timestamp
+        let delta: CFTimeInterval
+        if lastTimestamp == 0 {
+            delta = 1.0 / 60.0
+        } else {
+            delta = timestamp - lastTimestamp
+        }
+        lastTimestamp = timestamp
+
+        // Actualizar tiempo de juego
+        elapsedTime += delta
+
+        // Actualizar obstáculos con velocidad dependiente del tiempo
+        updateObstacles(delta: delta)
+
         // Verificar colisiones
         checkCollisions()
-        
-        // Generar nuevos obstáculos
-        updateObstacleSpawning()
-        
+
+        // Generar nuevos obstáculos según el tiempo transcurrido
+        updateObstacleSpawning(delta: delta)
+
         // Aplicar gravedad al player
         player?.moveDown()
-        
+
         DispatchQueue.main.async {
             self.objectWillChange.send()
         }
     }
     
-    private func updateObstacles() {
+    private func updateObstacles(delta: CFTimeInterval) {
+        // velocidad base en puntos por frame aproximado; aumenta después de 60s
+        let baseSpeed: CGFloat = elapsedTime < 60 ? 3.0 : 6.0
+        let speed = baseSpeed * obstacleSpeedMultiplier
+
         for obstacle in obstacles {
-            obstacle.moveDown(speed: 5 * obstacleSpeedMultiplier)
+            obstacle.moveDown(speed: speed * CGFloat(delta * 60))
         }
-        
+
         // Remover obstáculos que salieron de pantalla
         obstacles.removeAll { $0.isOffScreen() }
     }
     
-    private func updateObstacleSpawning() {
-        accumulatedTime += 0.016 // ~60 FPS
-        
-        if accumulatedTime >= obstacleSpawnInterval {
+    private func updateObstacleSpawning(delta: CFTimeInterval) {
+        // Ajustar frecuencia según tiempo de juego: menos frecuentes el primer minuto
+        let spawnInterval: TimeInterval = elapsedTime < 60 ? 1.5 : 0.8
+
+        spawnAccumulator += delta
+
+        if spawnAccumulator >= spawnInterval {
             let newObstacle = Obstacle(screenWidth: screenSize.width, width: 40, height: 40)
             obstacles.append(newObstacle)
-            accumulatedTime = 0
+            spawnAccumulator = 0
         }
     }
     
@@ -131,28 +153,5 @@ class ViewModelJumpex: ObservableObject {
     private func playSuccessSound() {
         // TODO: Placeholder - Poner sonido de éxito (obstáculo esquivado) aquí
         print("🔊 Sonido de obstáculo esquivado")
-    }
-}
-
-    func movePlayer(){
-        print("move player")
-        player?.moveUp()
-        objectWillChange.send()
-        
-    }
-  
-
-    func restartGame(size: CGSize) {
-        // Reiniciar player a la posición inicial
-        let playerWidth: CGFloat = 110
-        let playerHeight: CGFloat = 10
-        let center = CGPoint(x: size.width/2, y: size.height - playerHeight/2 - 20)
-        self.player = Player(center: center, width: playerWidth, height: playerHeight)
-        // Reiniciar el bucle de juego
-        startGameLoop()
-    }
-
-    deinit {
-        stopGameLoop()
     }
 }

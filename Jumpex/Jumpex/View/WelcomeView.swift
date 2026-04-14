@@ -22,7 +22,7 @@ struct WelcomeView: View {
 
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.5)) {
-                    currentScreen = .levelSelection
+                    currentScreen = .gameplay
                 }
             }) {
                 Text("EMPEZAR")

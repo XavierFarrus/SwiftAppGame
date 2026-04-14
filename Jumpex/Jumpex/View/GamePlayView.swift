@@ -28,7 +28,7 @@ struct GamePlayView: View {
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.white)
 
-                        Text(viewModel.currentLevel == 1 ? "PRINCIPIANTE" : "INTERMEDIO")
+                        Text(viewModel.elapsedTime < 60 ? "PRINCIPIANTE" : "DIFÍCIL")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.yellow)
                     }
