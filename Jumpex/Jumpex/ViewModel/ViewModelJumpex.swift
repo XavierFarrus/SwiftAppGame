@@ -1,53 +1,138 @@
 import SwiftUI
 import UIKit
 
-class ViewModel:ObservableObject{
-
+class ViewModelJumpex: ObservableObject {
+    
     @Published var player: Player?
-
+    @Published var obstacles: [Obstacle] = []
+    @Published var score: Int = 0
+    @Published var gameOver: Bool = false
+    @Published var currentLevel: Int = 1 // 1: Beginner, 2: Intermediate
+    @Published var screenSize: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+    
     private var displayLink: CADisplayLink?
     private var lastTimestamp: CFTimeInterval = 0
     private var accumulatedTime: TimeInterval = 0
-    private let obstacleSpawnInterval: TimeInterval = 10
-
-    func setUpPlayer(size: CGSize){
-       
+    private let obstacleSpawnInterval: TimeInterval = 1.5
+    private var passedObstacles: Set<Int> = []
+    
+    // Parámetros del juego según nivel
+    private var obstacleSpeedMultiplier: CGFloat {
+        return currentLevel == 1 ? 1.0 : 1.5
+    }
+    
+    func setUpPlayer(size: CGSize) {
+        screenSize = size
         let playerWidth: CGFloat = 40
         let playerHeight: CGFloat = 40
-        let center = CGPoint(x:size.width/10 ,y:size.height/2)
+        let center = CGPoint(x: size.width / 2, y: size.height - 100)
         self.player = Player(center: center, width: playerWidth, height: playerHeight)
-       startGameLoop()
+        self.score = 0
+        self.gameOver = false
+        self.obstacles = []
+        self.passedObstacles = []
+        startGameLoop()
     }
-
-   /* func updatePlayerX(to locationX: CGFloat, in size: CGSize){
-        guard let player = player else { return }
-        let halfWidth = player.width/2
-        let minX = halfWidth
-        let maxX = size.width - halfWidth
-        let clampedX = min(max(locationX, minX), maxX)
-        player.center = CGPoint(x: clampedX, y: player.center.y)
-        objectWillChange.send()
-    }*/
-
-    private func startGameLoop(){
+    
+    private func startGameLoop() {
         guard displayLink == nil else { return }
         displayLink = CADisplayLink(target: self, selector: #selector(gameLoop))
         displayLink?.add(to: .main, forMode: .common)
     }
-
-    func stopGameLoop(){
+    
+    func stopGameLoop() {
         displayLink?.invalidate()
         displayLink = nil
         lastTimestamp = 0
         accumulatedTime = 0
     }
-
-    @objc private func gameLoop(){
+    
+    @objc private func gameLoop() {
+        guard !gameOver else { return }
         
+        // Actualizar obstáculos
+        updateObstacles()
+        
+        // Verificar colisiones
+        checkCollisions()
+        
+        // Generar nuevos obstáculos
+        updateObstacleSpawning()
+        
+        // Aplicar gravedad al player
         player?.moveDown()
-        objectWillChange.send()
         
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
     }
+    
+    private func updateObstacles() {
+        for obstacle in obstacles {
+            obstacle.moveDown(speed: 5 * obstacleSpeedMultiplier)
+        }
+        
+        // Remover obstáculos que salieron de pantalla
+        obstacles.removeAll { $0.isOffScreen() }
+    }
+    
+    private func updateObstacleSpawning() {
+        accumulatedTime += 0.016 // ~60 FPS
+        
+        if accumulatedTime >= obstacleSpawnInterval {
+            let newObstacle = Obstacle(screenWidth: screenSize.width, width: 40, height: 40)
+            obstacles.append(newObstacle)
+            accumulatedTime = 0
+        }
+    }
+    
+    private func checkCollisions() {
+        guard let player = player else { return }
+        
+        for (index, obstacle) in obstacles.enumerated() {
+            // Verificar si el jugador colidió con el obstáculo
+            if player.checkCollisionWith(obstacle.frame) {
+                // Sonido de colisión
+                playCollisionSound()
+                gameOver = true
+                stopGameLoop()
+                return
+            }
+            
+            // Verificar si el jugador esquivó el obstáculo
+            if obstacle.center.y > player.center.y && !passedObstacles.contains(index) {
+                passedObstacles.insert(index)
+                score += 1
+                playSuccessSound()
+            }
+        }
+    }
+    
+    /// Mueve el player al carril especificado (0, 1, 2)
+    func movePlayerToLane(_ lane: Int) {
+        player?.moveToLane(lane, screenWidth: screenSize.width)
+    }
+    
+    /// Reinicia el juego
+    func restartGame() {
+        stopGameLoop()
+        obstacles = []
+        passedObstacles = []
+        gameOver = false
+        setUpPlayer(size: screenSize)
+    }
+    
+    // MARK: - Sound Management
+    private func playCollisionSound() {
+        // TODO: Placeholder - Poner sonido de colisión aquí
+        print("🔊 Sonido de colisión")
+    }
+    
+    private func playSuccessSound() {
+        // TODO: Placeholder - Poner sonido de éxito (obstáculo esquivado) aquí
+        print("🔊 Sonido de obstáculo esquivado")
+    }
+}
 
     func movePlayer(){
         print("move player")
