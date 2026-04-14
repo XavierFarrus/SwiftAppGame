@@ -5,12 +5,14 @@ import SwiftUI
 class Player: Sprite{
     
     //Velocidad
-    func move(){
-        self.center.y+=1 // + Velocidad
-    }
-    func moveToPoint(_ point:CGPoint){
+    func moveDown(){
         withAnimation{
-            self.center =  point
+            self.center.y+=1 // + Velocidad
+        }
+    }
+    func moveUp(){
+        withAnimation{
+            self.center.y-=10
         }
     }
 }

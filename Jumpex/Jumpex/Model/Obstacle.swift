@@ -6,35 +6,7 @@
 //
 
 import Foundation
-import SwiftUI
 
-class Obstacle: Sprite {
-    
-    var carril: Int // 0, 1 o 2
-    
-    init(carril: Int? = nil, screenWidth: CGFloat) {
-        // Si no se especifica carril, asignarlo aleatoriamente
-        self.carril = carril ?? Int.random(in: 0...2)
-        
-        // Calcular el center.x según el carril
-        // Dividimos la pantalla en 3 carriles iguales
-        let carrileWidth = screenWidth / 3
-        let centerX = (CGFloat(self.carril) * carrileWidth) + (carrileWidth / 2)
-        
-        // El obstáculo aparecerá en la parte superior de la pantalla
-        let centerY = -20 // Un poco por encima de la pantalla
-        
-        let center = CGPoint(x: centerX, y: centerY)
-        let width: CGFloat = 40
-        let height: CGFloat = 40
-        
-        super.init(center: center, width: width, height: height)
-    }
-    
-    func move() {
-        // Mover el obstáculo hacia la izquierda en el eje X
-        self.center.x -= 1
-        // También bajar hacia abajo
-        self.center.y += 2
-    }
-} 
+// Class obstacle quehereda de sprite, en el metodo constructor tendremos un atributo que sea carril que sera un valor 0,1 o 2 Definimos e metodo constructor que asignara el valor carril aleatoriamente y con ese valor de carri decidiremos que center le daremos a obstacuilo en la view
+
+// creamos en el viewmodel un obstacuo como player, instanciamos un obstacuo y en la view ponemos el codigo para tener un obstaculo, cada vez que arranquemos e juego veremos que existe, una vez funcione iremos al gameloop para ir moviendolo en el eje X, -=1 

@@ -4,7 +4,6 @@ import UIKit
 class ViewModel:ObservableObject{
 
     @Published var player: Player?
-    @Published var obstacle: Obstacle?
 
     private var displayLink: CADisplayLink?
     private var lastTimestamp: CFTimeInterval = 0
@@ -17,10 +16,6 @@ class ViewModel:ObservableObject{
         let playerHeight: CGFloat = 40
         let center = CGPoint(x:size.width/10 ,y:size.height/2)
         self.player = Player(center: center, width: playerWidth, height: playerHeight)
-        
-        // Crear un obstáculo de prueba
-        self.obstacle = Obstacle(screenWidth: size.width)
-        
        startGameLoop()
     }
 
@@ -50,7 +45,6 @@ class ViewModel:ObservableObject{
     @objc private func gameLoop(){
         
         player?.moveDown()
-        obstacle?.move()
         objectWillChange.send()
         
     }

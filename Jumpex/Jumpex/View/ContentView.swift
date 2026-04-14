@@ -15,13 +15,6 @@ struct ContentView: View {
                         .frame(width: player.width, height: player.height)
                         .position(player.center)
                 }
-                
-                if let obstacle = viewModel.obstacle {
-                    Rectangle()
-                        .fill(Color.yellow)
-                        .frame(width: obstacle.width, height: obstacle.height)
-                        .position(obstacle.center)
-                }
             }
             .onAppear {
                 viewModel.setUpPlayer(size: geometry.size)
