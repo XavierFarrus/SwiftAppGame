@@ -51,6 +51,14 @@ struct GameView: View {
                         Text("Vidas: \(viewModel.lives)")
                         Text("Nivel: \(viewModel.levelText)")
                         Text("Puntos: \(viewModel.score)")
+                        
+                        Button(action: {
+                            viewModel.toggleMusic()
+                        }) {
+                            Image(systemName: viewModel.audioManager.isMusicOn ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                                .foregroundColor(.white)
+                                .font(.title2)
+                        }
                     }
                     .foregroundColor(.white)
                     .padding(.top, 10)

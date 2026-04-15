@@ -12,6 +12,8 @@ class ViewModel: ObservableObject {
     @Published var levelText: String = "Fácil"
     @Published var showStartScreen: Bool = true
     
+    let audioManager = AudioManager()
+    
     private var displayLink: CADisplayLink?
     private var lastTimestamp: CFTimeInterval = 0
     private var accumulatedSpawnTime: TimeInterval = 0
@@ -42,7 +44,12 @@ class ViewModel: ObservableObject {
     func startGame(size: CGSize) {
         restartGame(size: size)
         showStartScreen = false
+        audioManager.playBackgroundMusic()
         startGameLoop()
+    }
+    
+    func startMenuMusic() {
+        audioManager.playBackgroundMusic()
     }
     
     private func startGameLoop() {
@@ -161,11 +168,14 @@ class ViewModel: ObservableObject {
         
         if let index = obstacles.firstIndex(where: { $0.checkCollisionWith(player.frame) }) {
             lives -= 1
+            
+            audioManager.playHitSound()
             onHit?()
             obstacles.remove(at: index)
             
             if lives <= 0 {
                 isGameOver = true
+                audioManager.playGameOverSound()
                 stopGameLoop()
             }
         }
@@ -190,6 +200,12 @@ class ViewModel: ObservableObject {
     func goToStart() {
         stopGameLoop()
         showStartScreen = true
+        audioManager.playBackgroundMusic()
+    }
+    
+    func toggleMusic() {
+        audioManager.toggleMusic()
+        objectWillChange.send()
     }
     
     deinit {
