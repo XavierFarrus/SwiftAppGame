@@ -7,7 +7,7 @@ struct StartView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.black
+                Color.green
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack {
@@ -53,8 +53,8 @@ struct StartView: View {
                             .cornerRadius(12)
                     }
                 }
-                .padding(30)
-                .background(Color.gray.opacity(0.25))
+                .frame(width: 500, height: 200)
+                .background(Color.blue.opacity(0.25))
                 .cornerRadius(20)
             }
             .onAppear {

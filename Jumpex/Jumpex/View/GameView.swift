@@ -11,7 +11,7 @@ struct GameView: View {
         GeometryReader { geometry in
             ZStack {
                 
-                Color.black
+                Color.green
                     .edgesIgnoringSafeArea(.all)
                 
                 // Carriles
@@ -35,7 +35,7 @@ struct GameView: View {
                 // Player
                 if let player = viewModel.player {
                     Circle()
-                        .fill(Color.blue)
+                        .fill(Color.yellow)
                         .frame(width: player.width, height: player.height)
                         .scaleEffect(playerHit ? 1.15 : 1.0)
                         .opacity(playerHit ? 0.6 : 1.0)
