@@ -53,7 +53,7 @@ struct StartView: View {
                             .cornerRadius(12)
                     }
                 }
-                .frame(width: 500, height: 200)
+                .frame(width: 200, height: 270)
                 .background(Color.blue.opacity(0.25))
                 .cornerRadius(20)
             }

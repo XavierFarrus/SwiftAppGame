@@ -13,7 +13,7 @@ class Obstacle: Sprite, Identifiable {
     
     override init(center: CGPoint, width: CGFloat, height: CGFloat) {
         self.speed = 4
-        self.color = Color.red
+        self.color = Color.blue
         super.init(center: center, width: width, height: height)
     }
     

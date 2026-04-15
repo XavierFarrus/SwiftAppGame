@@ -27,7 +27,6 @@ struct GameView: View {
                         .fill(obstacle.color)
                         .frame(width: obstacle.width, height: obstacle.height)
                         .scaleEffect(obstacleHit ? 0.2 : 1.0)
-                        .opacity(obstacleHit ? 0.0 : 1.0)
                         .position(obstacle.center)
                         .animation(Animation.easeInOut(duration: 0.20))
                 }
@@ -69,19 +68,17 @@ struct GameView: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 viewModel.playerJump()
-                
-                withAnimation(Animation.easeInOut(duration: 0.10)) {
-                    playerHit = false
-                    obstacleHit = false
-                }
             }
-            .onAppear {
-                viewModel.setUpGame(size: geometry.size)
+            viewModel.onHit = {
+                withAnimation(Animation.easeInOut(duration: 0.20)) {
+                    playerHit = true
+                    obstacleHit = true
+                }
                 
-                viewModel.onHit = {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
                     withAnimation(Animation.easeInOut(duration: 0.20)) {
-                        playerHit = true
-                        obstacleHit = true
+                        playerHit = false
+                        obstacleHit = false
                     }
                 }
             }
