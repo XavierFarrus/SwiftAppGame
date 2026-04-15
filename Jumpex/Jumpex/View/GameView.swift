@@ -23,15 +23,20 @@ struct GameView: View {
                     Rectangle()
                         .fill(obstacle.color)
                         .frame(width: obstacle.width, height: obstacle.height)
+                        .scaleEffect(obstacle.scale)
+                        .opacity(obstacle.opacity)
                         .position(obstacle.center)
-                }
+}
                 
                 // Player
                 if let player = viewModel.player {
                     Circle()
                         .fill(Color.blue)
                         .frame(width: player.width, height: player.height)
+                        .scaleEffect(player.scale)
+                        .opacity(player.opacity)
                         .position(player.center)
+                        .shadow(color: Color.blue.opacity(0.5), radius: 8)
                 }
                 
                 // HUD

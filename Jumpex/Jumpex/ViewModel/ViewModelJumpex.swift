@@ -159,14 +159,46 @@ class ViewModel: ObservableObject {
     
     private func checkCollisions() {
         guard let player = player else { return }
-        
+    
         if let index = obstacles.firstIndex(where: { $0.checkCollisionWith(player.frame) }) {
-            obstacles.remove(at: index)
+            let hitObstacle = obstacles[index]
+            
+            // Evitar varias colisiones seguidas mientras anima
+            if hitObstacle.opacity < 1.0 {
+                return
+            }
+            
             lives -= 1
             
-            if lives <= 0 {
-                isGameOver = true
-                stopGameLoop()
+            // Animación del player al impactar
+            withAnimation(.easeInOut(duration: 0.20)) {
+                player.scale = 1.20
+                player.opacity = 0.65
+            }
+            
+            // Animación del obstáculo antes de desaparecer
+            withAnimation(.easeInOut(duration: 0.20)) {
+                hitObstacle.scale = 0.15
+                hitObstacle.opacity = 0.0
+            }
+            
+            objectWillChange.send()
+            
+            // Restaurar player y borrar obstáculo al terminar la animación
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    player.scale = 1.0
+                    player.opacity = 1.0
+                }
+                
+                self.obstacles.removeAll { $0.id == hitObstacle.id }
+                
+                if self.lives <= 0 {
+                    self.isGameOver = true
+                    self.stopGameLoop()
+                }
+                
+                self.objectWillChange.send()
             }
         }
     }

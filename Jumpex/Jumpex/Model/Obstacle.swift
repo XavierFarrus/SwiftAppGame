@@ -7,9 +7,13 @@ class Obstacle: Sprite, Identifiable {
     var speed: CGFloat
     var color: Color
     
+    // Propiedades para animación
+    var scale: CGFloat = 1.0
+    var opacity: Double = 1.0
+    
     override init(center: CGPoint, width: CGFloat, height: CGFloat) {
         self.speed = 4
-        self.color = .red
+        self.color = Color.red
         super.init(center: center, width: width, height: height)
     }
     
