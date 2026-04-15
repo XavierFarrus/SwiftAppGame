@@ -32,7 +32,6 @@ struct GameView: View {
                         .fill(Color.blue)
                         .frame(width: player.width, height: player.height)
                         .position(player.center)
-                        .shadow(color: .blue.opacity(0.5), radius: 8)
                 }
                 
                 // HUD
@@ -66,17 +65,12 @@ struct GameView: View {
                     primaryButton: .default(Text("Reiniciar")) {
                         viewModel.startGame(size: geometry.size)
                     },
-                    secondaryButton: .cancel(Text("Salir"))
+                    secondaryButton: .destructive(Text("Salir")) {
+                        viewModel.showStartScreen = true
+                    }
                 )
             }
         }
     }
 }
 
-struct GameView_Previews: PreviewProvider {
-    static var previews: some View {
-        GameView()
-            .environmentObject(ViewModel())
-            .previewInterfaceOrientation(.landscapeLeft)
-    }
-}

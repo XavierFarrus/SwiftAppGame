@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EFD07C7F2F8FDAEB005CF34D /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD07C7E2F8FDAEB005CF34D /* GameView.swift */; };
+		EFD07C822F8FDAFA005CF34D /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD07C812F8FDAFA005CF34D /* StartView.swift */; };
 		EFD4EC712F8D3DC10006723B /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD4EC702F8D3DC10006723B /* Player.swift */; };
 		EFD4EC762F8D3DE70006723B /* Sprite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD4EC752F8D3DE70006723B /* Sprite.swift */; };
 		EFD4EC7B2F8D3F400006723B /* ViewModelJumpex.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD4EC7A2F8D3F400006723B /* ViewModelJumpex.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EFD07C7E2F8FDAEB005CF34D /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		EFD07C812F8FDAFA005CF34D /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		EFD4EC702F8D3DC10006723B /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		EFD4EC752F8D3DE70006723B /* Sprite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sprite.swift; sourceTree = "<group>"; };
 		EFD4EC7A2F8D3F400006723B /* ViewModelJumpex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelJumpex.swift; sourceTree = "<group>"; };
@@ -63,6 +67,8 @@
 			isa = PBXGroup;
 			children = (
 				EFF2B5E22F719A430001B88E /* ContentView.swift */,
+				EFD07C7E2F8FDAEB005CF34D /* GameView.swift */,
+				EFD07C812F8FDAFA005CF34D /* StartView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -177,9 +183,11 @@
 				EFF2B5E32F719A430001B88E /* ContentView.swift in Sources */,
 				EFD4EC712F8D3DC10006723B /* Player.swift in Sources */,
 				EFD4EC7F2F8D49DA0006723B /* Obstacle.swift in Sources */,
+				EFD07C822F8FDAFA005CF34D /* StartView.swift in Sources */,
 				EFD4EC7B2F8D3F400006723B /* ViewModelJumpex.swift in Sources */,
 				EFD4EC762F8D3DE70006723B /* Sprite.swift in Sources */,
 				EFF2B5E12F719A430001B88E /* JumpexApp.swift in Sources */,
+				EFD07C7F2F8FDAEB005CF34D /* GameView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
