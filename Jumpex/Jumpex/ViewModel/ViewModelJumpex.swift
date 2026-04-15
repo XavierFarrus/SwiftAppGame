@@ -22,6 +22,8 @@ class ViewModel: ObservableObject {
     
     private var spawnInterval: TimeInterval = 1.2
     
+    var onHit: (() -> Void)?
+    
     func setUpGame(size: CGSize) {
         gameWidth = size.width
         gameHeight = size.height
@@ -106,20 +108,17 @@ class ViewModel: ObservableObject {
     private func updatePlayer() {
         guard let player = player else { return }
         
-        // gravedad simple
         player.velocityY += 0.35
         var newY = player.center.y + player.velocityY
         
         let minY = player.height / 2
         let maxY = gameHeight - player.height / 2
         
-        // techo
         if newY < minY {
             newY = minY
             player.velocityY = 0
         }
         
-        // suelo
         if newY > maxY {
             newY = maxY
             player.velocityY = 0
@@ -159,46 +158,15 @@ class ViewModel: ObservableObject {
     
     private func checkCollisions() {
         guard let player = player else { return }
-    
+        
         if let index = obstacles.firstIndex(where: { $0.checkCollisionWith(player.frame) }) {
-            let hitObstacle = obstacles[index]
-            
-            // Evitar varias colisiones seguidas mientras anima
-            if hitObstacle.opacity < 1.0 {
-                return
-            }
-            
             lives -= 1
+            onHit?()
+            obstacles.remove(at: index)
             
-            // Animación del player al impactar
-            withAnimation(.easeInOut(duration: 0.20)) {
-                player.scale = 1.20
-                player.opacity = 0.65
-            }
-            
-            // Animación del obstáculo antes de desaparecer
-            withAnimation(.easeInOut(duration: 0.20)) {
-                hitObstacle.scale = 0.15
-                hitObstacle.opacity = 0.0
-            }
-            
-            objectWillChange.send()
-            
-            // Restaurar player y borrar obstáculo al terminar la animación
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
-                withAnimation(.easeInOut(duration: 0.15)) {
-                    player.scale = 1.0
-                    player.opacity = 1.0
-                }
-                
-                self.obstacles.removeAll { $0.id == hitObstacle.id }
-                
-                if self.lives <= 0 {
-                    self.isGameOver = true
-                    self.stopGameLoop()
-                }
-                
-                self.objectWillChange.send()
+            if lives <= 0 {
+                isGameOver = true
+                stopGameLoop()
             }
         }
     }
@@ -217,6 +185,11 @@ class ViewModel: ObservableObject {
         accumulatedGameTime = 0
         
         setUpGame(size: size)
+    }
+    
+    func goToStart() {
+        stopGameLoop()
+        showStartScreen = true
     }
     
     deinit {
