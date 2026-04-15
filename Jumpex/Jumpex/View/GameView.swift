@@ -11,7 +11,7 @@ struct GameView: View {
         GeometryReader { geometry in
             ZStack {
                 
-                Color.green
+                Color.black
                     .edgesIgnoringSafeArea(.all)
                 
                 // Carriles
@@ -34,7 +34,7 @@ struct GameView: View {
                 // Player
                 if let player = viewModel.player {
                     Circle()
-                        .fill(Color.yellow)
+                        .fill(Color.blue)
                         .frame(width: player.width, height: player.height)
                         .scaleEffect(playerHit ? 1.15 : 1.0)
                         .opacity(playerHit ? 0.6 : 1.0)
@@ -69,21 +69,25 @@ struct GameView: View {
             .onTapGesture {
                 viewModel.playerJump()
             }
-            viewModel.onHit = {
-                withAnimation(Animation.easeInOut(duration: 0.20)) {
-                    playerHit = true
-                    obstacleHit = true
+            .onAppear {
+                viewModel.setUpGame(size: geometry.size)
+                
+                viewModel.onHit = {
+                    withAnimation(Animation.easeInOut(duration: 0.20)) {
+                        playerHit = true
+                        obstacleHit = true
+                    }
                 }
-            }
-
-            viewModel.onResetHit = {
-                playerHit = false
-                obstacleHit = false
+                
+                viewModel.onResetHit = {
+                    playerHit = false
+                    obstacleHit = false
+                }
             }
             .alert(isPresented: Binding(
                 get: { viewModel.isGameOver },
-                set: { viewModel.isGameOver = $0 })
-            ) {
+                set: { viewModel.isGameOver = $0 }
+            )) {
                 Alert(
                     title: Text("Game Over"),
                     message: Text("Puntuación: \(viewModel.score)"),
