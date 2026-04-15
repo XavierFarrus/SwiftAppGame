@@ -25,6 +25,7 @@ class ViewModel: ObservableObject {
     private var spawnInterval: TimeInterval = 1.2
     
     var onHit: (() -> Void)?
+    var onResetHit: (() -> Void)?
     
     func setUpGame(size: CGSize) {
         gameWidth = size.width
@@ -99,7 +100,10 @@ class ViewModel: ObservableObject {
             score += 10
         }
         
+        onResetHit?()
+        
         objectWillChange.send()
+        
     }
     
     private func updateLevel() {

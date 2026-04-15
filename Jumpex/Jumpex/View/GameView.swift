@@ -74,13 +74,11 @@ struct GameView: View {
                     playerHit = true
                     obstacleHit = true
                 }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
-                    withAnimation(Animation.easeInOut(duration: 0.20)) {
-                        playerHit = false
-                        obstacleHit = false
-                    }
-                }
+            }
+
+            viewModel.onResetHit = {
+                playerHit = false
+                obstacleHit = false
             }
             .alert(isPresented: Binding(
                 get: { viewModel.isGameOver },
